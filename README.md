@@ -1,43 +1,75 @@
-# Sewkos App (Flutter Frontend)
+# Sewkos App (Flutter Mobile)
 
-Ini adalah aplikasi mobile cross-platform (Android, iOS) untuk mencari kos di Sumba. Aplikasi ini dibangun dengan Flutter dan terhubung ke Sewkos Backend API.
+**Sewkos** adalah aplikasi mobile cross-platform (Android & iOS) yang dirancang khusus untuk membantu kamu cari kos di Sumba dengan mudah dan cepat. Dibangun pakai Flutter, terhubung langsung ke Sewkos Backend API untuk pengalaman lancar tanpa drama.
 
-## Fitur Utama
+---
 
--   **Pencarian & Filter:** Filter canggih berdasarkan harga, fasilitas, lokasi, dan jangkauan.
--   **Peta Interaktif:** Menampilkan lokasi kos di OpenStreetMap.
--   **Detail Kos:** Halaman detail dengan deskripsi, gambar, dan formulir ulasan.
--   **Autentikasi Pemilik:** Alur login dan pendaftaran yang aman untuk pemilik kos.
--   **Dashboard Pemilik:** Mengelola daftar kos, termasuk opsi edit dan hapus.
+## ✨ Fitur Unggulan
 
-## Persyaratan Sistem
+- 🔍 **Pencarian & Filter Pintar**  
+  Cari kos berdasarkan harga, fasilitas, lokasi, dan radius jangkauan — semua bisa kamu atur sesuai kebutuhan.
 
--   [Flutter SDK](https://flutter.dev/docs/get-started/install)
--   [Android Studio](https://developer.android.com/studio) atau [Visual Studio Code](https://code.visualstudio.com/)
--   Perangkat fisik atau emulator Android/iOS
+- 🗺️ **Peta Interaktif**  
+  Lihat lokasi kos dengan peta OpenStreetMap yang responsif dan gampang digunakan.
 
-## Panduan Instalasi
+- 🏠 **Detail Kos Lengkap**  
+  Informasi lengkap dengan deskripsi, galeri foto, dan formulir ulasan untuk bantu kamu ambil keputusan.
 
-1.  **Clone repositori:**
+- 🔐 **Autentikasi Pemilik Kos**  
+  Login dan pendaftaran aman khusus untuk pemilik kos agar bisa mengelola properti mereka.
+
+- 📊 **Dashboard Pemilik Kos**  
+  Kelola daftar kos, edit info, hingga hapus dengan mudah melalui dashboard yang intuitif.
+
+---
+
+## ⚙️ Persyaratan Sistem
+
+- Flutter SDK (cek [Flutter install guide](https://flutter.dev/docs/get-started/install))  
+- Android Studio atau Visual Studio Code  
+- Perangkat fisik atau emulator Android/iOS siap pakai
+
+---
+
+## 🚀 Cara Memulai
+
+1. **Clone repositori:**
     ```bash
-    git clone [https://github.com/nanutechsolution/sewkos-mobile.git](https://github.com/nanutechsolution/sewkos-mobile.git)
-    cd sewkos-app
+    git clone https://github.com/nanutechsolution/sewkos-mobile.git
+    cd sewkos-mobile
     ```
 
-2.  **Instal dependensi:**
+2. **Install dependencies:**
     ```bash
     flutter pub get
     ```
 
-3.  **Konfigurasi Android:**
-    Buka `android/app/src/main/AndroidManifest.xml` dan pastikan izin serta kunci Google Maps API sudah dikonfigurasi.
+3. **Konfigurasi Android:**
 
-4.  **Jalankan aplikasi:**
-    Hubungkan perangkat Anda atau jalankan emulator, lalu jalankan aplikasi.
+    Pastikan di `android/app/src/main/AndroidManifest.xml` sudah ada izin yang dibutuhkan dan Google Maps API key sudah diatur.
+
+4. **Jalankan aplikasi:**
+
+    Sambungkan perangkat atau buka emulator, lalu jalankan:
     ```bash
     flutter run
     ```
 
-## Screenshot
+---
 
-(Tambahkan screenshot aplikasi Anda di sini)
+## 📸 Preview Aplikasi
+
+_(Tambahkan screenshot keren aplikasi di sini supaya makin menarik!)_
+
+---
+
+## 💡 Tips
+
+- Untuk pengalaman terbaik, pastikan perangkat sudah terkoneksi internet stabil.  
+- Gunakan emulator dengan konfigurasi peta agar fitur peta berjalan mulus.  
+- Update Google Maps API key kalau pindah ke environment lain.
+
+---
+
+Kalau kamu mau, aku juga bisa bantu bikin template CONTRIBUTING.md atau CHANGELOG biar repo makin profesional dan siap kolaborasi. Gimana? Mau aku tambah?
+
