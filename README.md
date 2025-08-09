@@ -71,5 +71,3 @@ _(Tambahkan screenshot keren aplikasi di sini supaya makin menarik!)_
 
 ---
 
-Kalau kamu mau, aku juga bisa bantu bikin template CONTRIBUTING.md atau CHANGELOG biar repo makin profesional dan siap kolaborasi. Gimana? Mau aku tambah?
-
