@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:kossumba_app/auth_check_screen.dart';
 import 'package:kossumba_app/favorite_screen.dart';
 import 'package:kossumba_app/kos.dart';
-import 'package:kossumba_app/kos_detail_screen.dart';
 import 'package:kossumba_app/kos_service.dart';
 import 'package:kossumba_app/location_search_dialog.dart';
 import 'package:kossumba_app/user_profile_screen.dart';
+import 'package:kossumba_app/widget/kos_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -233,153 +233,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return fullName.split(' ')[0].trim();
   }
 
-  void _showFilterDialog() {
-    String? tempSearchQuery = _selectedLocation;
-    double? tempPriceMax = _priceMax;
-    List<String> tempFacilities = List.from(_selectedFacilities);
-
-    double? tempLatitude;
-    double? tempLongitude;
-    double? tempRadius;
-    String? tempName;
-
-    final TextEditingController searchController =
-        TextEditingController(text: tempSearchQuery);
-    final TextEditingController priceController =
-        TextEditingController(text: tempPriceMax?.toString());
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Filter Pencarian'),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Cari Nama/Lokasi',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    TextField(
-                      controller: searchController,
-                      onChanged: (value) => tempSearchQuery = value,
-                      decoration: const InputDecoration(
-                          hintText: 'Misalnya: Kos Bintang'),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton.icon(
-                      onPressed: () async {
-                        final Map<String, dynamic>? result =
-                            await showDialog<Map<String, dynamic>>(
-                          context: context,
-                          builder: (_) => const LocationSearchDialog(),
-                        );
-                        if (result != null) {
-                          setState(() {
-                            tempLatitude = result['latitude'] as double?;
-                            tempLongitude = result['longitude'] as double?;
-                            tempRadius = result['radius'] as double?;
-                            tempName = result['name'] as String?;
-                          });
-                        }
-                      },
-                      icon: const Icon(Icons.location_on),
-                      label: Text(
-                        tempLatitude != null && tempLongitude != null
-                            ? 'Lokasi terpilih: "${_extractName(tempName)}" (Radius: ${tempRadius?.toStringAsFixed(0)} km)'
-                            : 'Cari Berdasarkan Jangkauan',
-                      ),
-                    ),
-                    if (tempLatitude != null && tempLongitude != null) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        'Sedang mencari kos di sekitar "${_extractName(tempName)}" dengan radius ${tempRadius?.toStringAsFixed(0)} km',
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                      ),
-                    ],
-                    const SizedBox(height: 20),
-                    const Text('Harga Maksimum',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    TextField(
-                      controller: priceController,
-                      onChanged: (value) =>
-                          tempPriceMax = double.tryParse(value),
-                      keyboardType: TextInputType.number,
-                      decoration:
-                          const InputDecoration(hintText: 'Misalnya: 600000'),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text('Fasilitas',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    CheckboxListTile(
-                      title: const Text('Wi-Fi'),
-                      value: tempFacilities.contains('Wi-Fi'),
-                      onChanged: (bool? val) {
-                        setState(() {
-                          val == true
-                              ? tempFacilities.add('Wi-Fi')
-                              : tempFacilities.remove('Wi-Fi');
-                        });
-                      },
-                    ),
-                    CheckboxListTile(
-                      title: const Text('AC'),
-                      value: tempFacilities.contains('AC'),
-                      onChanged: (bool? val) {
-                        setState(() {
-                          val == true
-                              ? tempFacilities.add('AC')
-                              : tempFacilities.remove('AC');
-                        });
-                      },
-                    ),
-                    CheckboxListTile(
-                      title: const Text('Dapur Bersama'),
-                      value: tempFacilities.contains('Dapur Bersama'),
-                      onChanged: (bool? val) {
-                        setState(() {
-                          val == true
-                              ? tempFacilities.add('Dapur Bersama')
-                              : tempFacilities.remove('Dapur Bersama');
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Batal'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _selectedLocation = tempSearchQuery;
-                _priceMax = tempPriceMax;
-                _selectedFacilities = tempFacilities;
-
-                _fetchKosList(
-                  searchQuery: tempSearchQuery,
-                  latitude: tempLatitude,
-                  longitude: tempLongitude,
-                  radius: tempRadius,
-                  priceMax: tempPriceMax,
-                  facilities: tempFacilities,
-                );
-                Navigator.of(context).pop();
-              },
-              child: const Text('Terapkan'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Widget _buildCategories() {
     final categories = [
       {'icon': Icons.house, 'label': 'Kos Bulanan'},
@@ -432,83 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildKosCard(Kos kos) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => KosDetailScreen(kosId: kos.id)),
-        );
-      },
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        child: Container(
-          height: 120,
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: SizedBox(
-                  width: 110,
-                  height: 110,
-                  child: Image.network(
-                    getFullImageUrl(kos.imageUrl),
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Icon(
-                        Icons.broken_image,
-                        size: 110,
-                        color: Colors.grey.shade400),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        kos.name,
-                        style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        kos.location,
-                        style: TextStyle(
-                            color: Colors.grey.shade600, fontSize: 14),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        kos.price,
-                        style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue),
-                      ),
-                      Text(
-                        'Fasilitas: ${kos.facilities.join(', ')}',
-                        style: TextStyle(
-                            color: Colors.grey.shade700, fontSize: 12),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    return KosCard(kos: kos);
   }
 
   Widget _buildRecommendedKos() {
@@ -548,20 +325,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  String getFullImageUrl(String url) {
-    if (url.startsWith('/storage') || url.startsWith('/assets')) {
-      return 'http://192.168.93.106:8000$url'; // ini sudah benar
-    }
-    // kemungkinan kamu gabung baseUrl + url yang sudah ada port
-    if (url.startsWith('http://192.168.93.106:8000')) {
-      return url; // jangan tambah port lagi
-    }
-    // fallback replace IP dan port
-    return url.replaceAll(
-        RegExp(r'http://[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(:[0-9]+)?'),
-        'http://192.168.93.106:8000');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -572,12 +335,18 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 3,
         actions: [
           IconButton(
-            icon: const Icon(Icons.add_business_outlined),
-            tooltip: 'Tambah Kos',
+            icon: const Icon(Icons.add_business),
+            tooltip: "Tambah Kos",
             onPressed: () async {
+              // Gunakan await untuk menunggu sampai OwnerDashboardScreen ditutup
               await Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const AuthCheckScreen()));
-              _fetchKosList();
+                MaterialPageRoute(
+                    builder: (context) => const AuthCheckScreen()),
+              );
+              // Setelah kembali, muat ulang data di HomeScreen
+              setState(() {
+                _fetchKosList();
+              });
             },
           ),
           IconButton(

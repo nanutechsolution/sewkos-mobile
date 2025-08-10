@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kossumba_app/kos.dart';
+import 'config.dart';
 
 class KosService {
-  static const String _baseUrl = 'http://192.168.93.106:8000/api/kos';
-  // static const String _ownerUrl = 'http://192.168.93.106:8000/api/owner';
-  static const String _apiUrl = 'http://192.168.93.106:8000/api';
-
   static Future<List<Kos>> getKosList({
     String? search,
     double? latitude,
@@ -38,7 +35,7 @@ class KosService {
     if (status != null && status.isNotEmpty) {
       params['status'] = status;
     }
-    final uri = Uri.parse('$_apiUrl/kos').replace(queryParameters: params);
+    final uri = Uri.parse('$baseUrl/api/kos').replace(queryParameters: params);
     // Uri uri = Uri.parse(_baseUrl).replace(queryParameters: params);
     final response = await http.get(uri, headers: {
       'Accept': 'application/json',
@@ -52,7 +49,7 @@ class KosService {
   }
 
   static Future<Kos> getKosDetail(int id) async {
-    final response = await http.get(Uri.parse('$_baseUrl/$id'));
+    final response = await http.get(Uri.parse('$baseUrl/api/kos/$id'));
 
     if (response.statusCode == 200) {
       return Kos.fromJson(json.decode(response.body));
@@ -64,7 +61,7 @@ class KosService {
   static Future<void> postReview(
       int kosId, String authorName, String comment, int rating) async {
     final response = await http.post(
-      Uri.parse('http://192.168.93.106:8000/api/kos/$kosId/reviews'),
+      Uri.parse('$baseUrl/api/kos/$kosId/reviews'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'

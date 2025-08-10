@@ -3,10 +3,9 @@ import 'package:http/http.dart' as http;
 import 'package:kossumba_app/auth_service.dart';
 import 'dart:convert';
 import 'package:kossumba_app/kos.dart';
+import 'config.dart';
 
 class OwnerService {
-  static const String _baseUrl = 'http://192.168.93.106:8000/api/owner';
-
   static Future<List<Kos>> fetchOwnerKosList() async {
     String? token = await AuthService.getToken();
     if (token == null || token.isEmpty) {
@@ -14,7 +13,7 @@ class OwnerService {
     }
 
     final response = await http.get(
-      Uri.parse('$_baseUrl/dashboard'),
+      Uri.parse('$baseUrl/api/owner/kos'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -50,7 +49,8 @@ class OwnerService {
       throw Exception('Token tidak ditemukan atau kosong');
     }
 
-    final request = http.MultipartRequest('POST', Uri.parse('$_baseUrl/kos'));
+    final request =
+        http.MultipartRequest('POST', Uri.parse('$baseUrl/api/owner/kos'));
 
     request.headers['Authorization'] = 'Bearer $token';
 
@@ -93,7 +93,7 @@ class OwnerService {
     }
 
     final response = await http.put(
-      Uri.parse('$_baseUrl/kos/$kosId'),
+      Uri.parse('$baseUrl/api/owner/kos/$kosId'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -131,7 +131,7 @@ class OwnerService {
     }
 
     final response = await http.put(
-      Uri.parse('$_baseUrl/kos/$kosId'),
+      Uri.parse('$baseUrl/api/owner/kos/$kosId'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -162,7 +162,7 @@ class OwnerService {
     }
 
     final response = await http.delete(
-      Uri.parse('$_baseUrl/kos/$kosId'),
+      Uri.parse('$baseUrl/api/owner/kos/$kosId'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

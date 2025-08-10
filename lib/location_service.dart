@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'config.dart';
 
 class LocationService {
-  static const String baseUrl = 'http://192.168.93.106:8000/api';
+  static const String baseUrls = '$baseUrl/api';
 
   static Future<List<Map<String, dynamic>>> searchLocation(String query) async {
     final uri = Uri.parse(
-        '$baseUrl/search-location?query=${Uri.encodeComponent(query)}');
+        '$baseUrls/search-location?query=${Uri.encodeComponent(query)}');
 
     final response = await http.get(uri);
 

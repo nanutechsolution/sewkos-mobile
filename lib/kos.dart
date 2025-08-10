@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'config.dart';
 
-const String _baseUrl = 'http://16.170.187.126:8000';
-const String _apiBaseUrl = 'http://16.170.187.126:8000/api';
+const String _baseUrl = '$baseUrl';
+const String _apiBaseUrl = '$baseUrl/api';
 
 class Kos {
   final int id;
@@ -15,6 +16,7 @@ class Kos {
   final String status;
   final double? latitude;
   final double? longitude;
+  final double? distance; // tambahan
 
   Kos({
     required this.id,
@@ -28,19 +30,47 @@ class Kos {
     required this.status,
     this.latitude,
     this.longitude,
+    this.distance,
   });
+
+  Kos copyWith({
+    int? id,
+    String? name,
+    String? location,
+    String? price,
+    String? description,
+    String? imageUrl,
+    List<String>? facilities,
+    List<Review>? reviews,
+    String? status,
+    double? latitude,
+    double? longitude,
+    double? distance,
+  }) {
+    return Kos(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      location: location ?? this.location,
+      price: price ?? this.price,
+      description: description ?? this.description,
+      imageUrl: imageUrl ?? this.imageUrl,
+      facilities: facilities ?? this.facilities,
+      reviews: reviews ?? this.reviews,
+      status: status ?? this.status,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      distance: distance ?? this.distance,
+    );
+  }
 
   factory Kos.fromJson(Map<String, dynamic> json) {
     List<String> facilitiesList = [];
     if (json['facilities'] != null) {
-      // PERBAIKAN: Cek tipe data sebelum memproses
       if (json['facilities'] is String) {
-        // Jika data adalah string JSON, dekode dulu
         facilitiesList = (jsonDecode(json['facilities'] as String) as List)
             .map((item) => item as String)
             .toList();
       } else if (json['facilities'] is List) {
-        // Jika data sudah berupa list, langsung gunakan
         facilitiesList =
             (json['facilities'] as List).map((item) => item as String).toList();
       }
@@ -76,6 +106,9 @@ class Kos {
           : null,
       longitude: json['longitude'] != null
           ? double.parse(json['longitude'].toString())
+          : null,
+      distance: json['distance'] != null
+          ? double.tryParse(json['distance'].toString())
           : null,
     );
   }

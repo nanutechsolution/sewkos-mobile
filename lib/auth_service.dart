@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'config.dart';
 
 class AuthService {
-  static const String _baseUrl = 'http://192.168.93.106:8000/api/owner/login';
+  static const String _baseUrl = '$baseUrl/api/owner/login';
   static const String _tokenKey = 'auth_token';
-  static const String _authUrl = 'http://192.168.93.106:8000/api';
+  static const String _authUrl = '$baseUrl/api';
 
   static Future<String?> login(String email, String password) async {
     final response = await http.post(
