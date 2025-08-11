@@ -22,12 +22,26 @@ dependencies:
   shared_preferences: ^2.2.2
   shimmer: ^3.0.0
   url_launcher: null
+  flutter_riverpod:
+  riverpod_annotation:
+  http_parser: ^4.0.2
+  path: ^1.8.3
+
 dev_dependencies:
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
+  build_runner:
+  custom_lint: 
+  riverpod_generator: 2.3.11
 
 flutter:
   uses-material-design: true
   assets:
     - assets/images/
+fonts:
+  - family: Poppins
+    fonts:
+      - asset: fonts/Poppins-Regular.ttf
+      - asset: fonts/Poppins-Bold.ttf
+        weight: 700
