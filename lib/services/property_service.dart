@@ -26,8 +26,9 @@ class PropertyService {
     if (category != null && category.isNotEmpty)
       queryParams['category'] = category;
 
-    final uri = Uri.parse('$apiBaseUrl/properties')
+    final uri = Uri.parse('$apiBaseUrl/api/properties')
         .replace(queryParameters: queryParams);
+    print(uri);
     final response = await http.get(uri, headers: {
       'Accept': 'application/json',
     });
@@ -43,7 +44,7 @@ class PropertyService {
 
   static Future<Property> getPropertyDetail(int propertyId) async {
     final response = await http
-        .get(Uri.parse('$apiBaseUrl/properties/$propertyId'), headers: {
+        .get(Uri.parse('$apiBaseUrl/api/properties/$propertyId'), headers: {
       'Accept': 'application/json',
     });
 

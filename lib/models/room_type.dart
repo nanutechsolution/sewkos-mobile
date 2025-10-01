@@ -18,6 +18,7 @@ class RoomType {
   final List<Room> rooms;
   final List<Facility> facilities;
   final List<RoomTypePrice> prices;
+  final List<RoomType>? roomTypes;
 
   RoomType({
     required this.id,
@@ -31,35 +32,14 @@ class RoomType {
     required this.rooms,
     this.facilities = const [],
     this.prices = const [],
+    this.roomTypes,
   });
 
   factory RoomType.fromJson(Map<String, dynamic> json) {
-    List<RoomTypeImage> parsedImages = [];
-    if (json['images'] != null) {
-      parsedImages = (json['images'] as List)
-          .map((i) => RoomTypeImage.fromJson(i))
-          .toList();
-    }
-
-    List<Room> parsedRooms = [];
-    if (json['rooms'] != null) {
-      parsedRooms =
-          (json['rooms'] as List).map((r) => Room.fromJson(r)).toList();
-    }
-
-    List<Facility> parsedFacilities = [];
-    if (json['facilities'] != null) {
-      parsedFacilities = (json['facilities'] as List)
-          .map((f) => Facility.fromJson(f))
-          .toList();
-    }
-
-    List<RoomTypePrice> parsedPrices = [];
-    if (json['prices'] != null) {
-      parsedPrices = (json['prices'] as List)
-          .map((p) => RoomTypePrice.fromJson(p))
-          .toList();
-    }
+    // Lakukan konversi yang aman untuk field numerik
+    int totalRooms = int.tryParse(json['total_rooms']?.toString() ?? '0') ?? 0;
+    int availableRooms =
+        int.tryParse(json['available_rooms']?.toString() ?? '0') ?? 0;
 
     return RoomType(
       id: json['id'] as int,
@@ -67,12 +47,23 @@ class RoomType {
       name: json['name'] as String,
       description: json['description'] as String?,
       sizeM2: parseDoubleSafely(json['size_m2']),
-      totalRooms: json['total_rooms'] as int,
-      availableRooms: json['available_rooms'] as int,
-      images: parsedImages,
-      rooms: parsedRooms,
-      facilities: parsedFacilities,
-      prices: parsedPrices,
+      totalRooms: totalRooms,
+      availableRooms: availableRooms,
+      images: parseListMapSafely(json['images'])
+          .map((i) => RoomTypeImage.fromJson(i))
+          .toList(),
+      rooms: parseListMapSafely(json['rooms'])
+          .map((r) => Room.fromJson(r))
+          .toList(),
+      facilities: parseListMapSafely(json['facilities'])
+          .map((f) => Facility.fromJson(f))
+          .toList(),
+      prices: parseListMapSafely(json['prices'])
+          .map((p) => RoomTypePrice.fromJson(p))
+          .toList(),
+      roomTypes: (json['room_types'] as List<dynamic>?)
+          ?.map((rtJson) => RoomType.fromJson(rtJson as Map<String, dynamic>))
+          .toList(),
     );
   }
 

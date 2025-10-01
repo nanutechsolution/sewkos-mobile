@@ -12,13 +12,12 @@ class Room {
     this.floor,
     required this.status,
   });
-
   factory Room.fromJson(Map<String, dynamic> json) {
     return Room(
       id: json['id'] as int,
       roomTypeId: json['room_type_id'] as int,
       roomNumber: json['room_number'] as String,
-      floor: json['floor'] as int?,
+      floor: int.tryParse(json['floor']?.toString() ?? ''),
       status: json['status'] as String,
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kossumba_app/Screens/home_screen.dart.dart';
 import 'package:kossumba_app/screens/auth_screen.dart';
+import 'package:kossumba_app/screens/home_screen.dart';
 import 'package:kossumba_app/services/auth.service.dart';
 import 'package:kossumba_app/providers/auth_provider.dart';
 

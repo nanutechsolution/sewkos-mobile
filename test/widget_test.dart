@@ -9,11 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:kossumba_app/main.dart';
+import 'package:kossumba_app/pages/guest_home_page.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const KosSumbaApp());
+    await tester.pumpWidget(const MainScreen());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

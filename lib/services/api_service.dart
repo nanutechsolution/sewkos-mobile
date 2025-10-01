@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:kossumba_app/Models/facility.dart';
+import 'package:kossumba_app/models/facility.dart';
 import 'package:kossumba_app/models/property.dart';
 import 'package:kossumba_app/services/auth.service.dart';
+import 'package:kossumba_app/config/config.dart';
 
 class ApiService {
-  static const String _apiBaseUrl = 'http://192.168.251.106:8000';
+  static const String _apiBaseUrl = apiBaseUrl;
   // --- Metode Helper Generik untuk Mengirim Permintaan ---
   static Future<Map<String, dynamic>> _sendRequest({
     required String method,
@@ -18,7 +19,6 @@ class ApiService {
     String? customMethod,
   }) async {
     Uri uri = Uri.parse('$_apiBaseUrl$endpoint');
-    print('Request: $method $uri');
     Map<String, String> headers = {
       'Accept': 'application/json',
     };
@@ -75,12 +75,14 @@ class ApiService {
           throw Exception('Metode HTTP tidak didukung: $method');
       }
     }
-
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return json.decode(response.body);
+    } else if (response.statusCode == 401) {
+      throw Exception("Unauthorized: Token tidak valid atau sudah kadaluarsa.");
     } else {
       throw Exception(
-          'Permintaan gagal: ${response.statusCode} - ${response.body}');
+        'Permintaan gagal: ${response.statusCode} - ${response.body}',
+      );
     }
   }
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kossumba_app/config/config.dart';
 import 'package:kossumba_app/helper/property_filter.dart';
 import 'package:kossumba_app/models/property_image.dart';
 import 'package:kossumba_app/models/room_type.dart';
-import 'package:kossumba_app/models/room_type_image.dart';
 import 'package:kossumba_app/providers/property_detail_provider.dart';
 
 class PropertyDetailScreen extends ConsumerStatefulWidget {
@@ -17,9 +17,6 @@ class PropertyDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _PropertyDetailScreenState extends ConsumerState<PropertyDetailScreen> {
-  String getFullImageUrl(String url) =>
-      url.startsWith('http') ? url : 'http://$url';
-
   @override
   Widget build(BuildContext context) {
     final propertyDetailAsyncValue =
@@ -37,94 +34,22 @@ class _PropertyDetailScreenState extends ConsumerState<PropertyDetailScreen> {
         return Scaffold(
           body: CustomScrollView(
             slivers: [
-              SliverAppBar(
-                expandedHeight: 280,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.network(
-                        property.images.isNotEmpty
-                            ? getFullImageUrl(property.images[0].imageUrl)
-                            : 'https://placehold.co/280x280/E0E0E0/FFFFFF?text=No+Image',
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.broken_image,
-                              size: 80, color: Colors.grey),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.transparent,
-                              Colors.black.withOpacity(0.6),
-                            ],
-                            stops: const [0.5, 1.0],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  title: Text(
-                    property.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      shadows: [
-                        Shadow(
-                            blurRadius: 6,
-                            color: Colors.black45,
-                            offset: Offset(0, 1))
-                      ],
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
-                ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.favorite_border),
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Fitur favorit segera hadir!')),
-                      );
-                    },
-                  ),
-                ],
-              ),
+              _buildSliverAppBar(property),
               SliverPadding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                    _buildInfoSection(
-                      title: 'Alamat',
-                      content:
-                          '${property.addressStreet}, ${property.addressCity}, ${property.addressProvince}',
-                    ),
+                    _buildInfoSection('Alamat',
+                        '${property.addressStreet}, ${property.addressCity}, ${property.addressProvince}'),
                     const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Fitur navigasi segera hadir!')),
-                        );
-                      },
-                      icon: const Icon(Icons.navigation),
-                      label: const Text('Mulai Navigasi'),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
+                    _buildActionButton(
+                        Icons.navigation, 'Mulai Navigasi', Colors.green, () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Fitur navigasi segera hadir!')),
+                      );
+                    }),
                     const SizedBox(height: 24),
                     _buildPropertyDetails(property),
                     const SizedBox(height: 24),
@@ -137,25 +62,14 @@ class _PropertyDetailScreenState extends ConsumerState<PropertyDetailScreen> {
                     const SizedBox(height: 32),
                     _buildReviewsSection(),
                     const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content:
-                                  Text('Fitur hubungi pemilik segera hadir!')),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
-                        minimumSize: const Size.fromHeight(50),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      child: const Text('Hubungi Pemilik',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                    ),
+                    _buildActionButton(
+                        Icons.phone, 'Hubungi Pemilik', Colors.blueAccent, () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content:
+                                Text('Fitur hubungi pemilik segera hadir!')),
+                      );
+                    }),
                     const SizedBox(height: 40),
                     _buildReviewFormPlaceholder(),
                   ]),
@@ -168,7 +82,63 @@ class _PropertyDetailScreenState extends ConsumerState<PropertyDetailScreen> {
     );
   }
 
-  Widget _buildInfoSection({required String title, required String content}) {
+  // =================== WIDGETS ===================
+
+  Widget _buildSliverAppBar(property) {
+    return SliverAppBar(
+      expandedHeight: 280,
+      pinned: true,
+      flexibleSpace: FlexibleSpaceBar(
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.network(
+              getFullImageUrl(property.images.isNotEmpty
+                  ? property.images[0].imageUrl
+                  : '/assets/images/no_image.png'),
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                color: Colors.grey[300],
+                child: const Icon(Icons.broken_image,
+                    size: 80, color: Colors.grey),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+                  stops: const [0.5, 1.0],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+            ),
+          ],
+        ),
+        title: Text(
+          property.name,
+          style: const TextStyle(fontWeight: FontWeight.bold, shadows: [
+            Shadow(blurRadius: 6, color: Colors.black45, offset: Offset(0, 1))
+          ]),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.favorite_border),
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Fitur favorit segera hadir!')),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoSection(String title, String content) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -178,6 +148,21 @@ class _PropertyDetailScreenState extends ConsumerState<PropertyDetailScreen> {
         Text(content,
             style: const TextStyle(fontSize: 16, color: Colors.black87)),
       ],
+    );
+  }
+
+  Widget _buildActionButton(
+      IconData icon, String label, Color color, VoidCallback onPressed) {
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon),
+      label: Text(label),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        minimumSize: const Size.fromHeight(50),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -196,18 +181,21 @@ class _PropertyDetailScreenState extends ConsumerState<PropertyDetailScreen> {
               'Tahun Dibangun', property.yearBuilt?.toString() ?? '-'),
           _buildDetailRow('Total Kamar', property.totalRooms.toString()),
           _buildDetailRow('Kamar Tersedia', property.availableRooms.toString()),
+          if (property.managerName != null ||
+              property.managerPhone != null) ...[
+            const SizedBox(height: 16),
+            const Divider(),
+            const SizedBox(height: 12),
+            const Text('Pengelola',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            _buildDetailRow('Nama', property.managerName ?? '-'),
+            _buildDetailRow('Telepon', property.managerPhone ?? '-'),
+          ],
           const SizedBox(height: 16),
           const Divider(),
           const SizedBox(height: 12),
-          const Text('Pengelola',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-          const SizedBox(height: 8),
-          _buildDetailRow('Nama', property.managerName ?? '-'),
-          _buildDetailRow('Telepon', property.managerPhone ?? '-'),
           _buildDetailRow('Catatan', property.notes ?? '-'),
-          const SizedBox(height: 16),
-          const Divider(),
-          const SizedBox(height: 12),
           const Text('Deskripsi & Peraturan',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
@@ -252,7 +240,7 @@ class _PropertyDetailScreenState extends ConsumerState<PropertyDetailScreen> {
             itemCount: images.length,
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
-              final imgUrl = getFullImageUrl(images[index].imageUrl);
+              final imgUrl = "$apiBaseUrl/storage/${images[index].imageUrl}";
               return ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
@@ -284,13 +272,10 @@ class _PropertyDetailScreenState extends ConsumerState<PropertyDetailScreen> {
           spacing: 10,
           runSpacing: 10,
           children: facilities
-              .map(
-                (f) => Chip(
+              .map((f) => Chip(
                   label: Text(f),
                   backgroundColor: Colors.blue.shade100,
-                  avatar: const Icon(Icons.check, color: Colors.blue),
-                ),
-              )
+                  avatar: const Icon(Icons.check, color: Colors.blue)))
               .toList(),
         ),
       ],
@@ -333,12 +318,9 @@ class _PropertyDetailScreenState extends ConsumerState<PropertyDetailScreen> {
                     const SizedBox(height: 8),
                     ...rt.prices.map(
                       (price) => _buildDetailRow(
-                        price.periodType.replaceAll('_', ' ').toTitleCase(),
-                        'Rp ${price.price.toStringAsFixed(0)}',
-                      ),
+                          price.periodType.replaceAll('_', ' ').toTitleCase(),
+                          'Rp ${price.price.toStringAsFixed(0)}'),
                     ),
-                    const SizedBox(height: 12),
-                    // _buildImageGallery('Foto Kamar', rt.images),
                     const SizedBox(height: 12),
                     _buildFacilityList('Fasilitas Kamar',
                         rt.facilities.map((f) => f.name).toList()),
@@ -357,29 +339,25 @@ class _PropertyDetailScreenState extends ConsumerState<PropertyDetailScreen> {
     );
   }
 
-  Widget _buildReviewsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Text('Ulasan & Rating',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        SizedBox(height: 12),
-        Text('Belum ada ulasan untuk properti ini.'),
-      ],
-    );
-  }
+  Widget _buildReviewsSection() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: const [
+          Text('Ulasan & Rating',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          SizedBox(height: 12),
+          Text('Belum ada ulasan untuk properti ini.'),
+        ],
+      );
 
-  Widget _buildReviewFormPlaceholder() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Text('Kirim Ulasan Anda',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        SizedBox(height: 12),
-        Text('Formulir ulasan akan segera hadir!'),
-      ],
-    );
-  }
+  Widget _buildReviewFormPlaceholder() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: const [
+          Text('Kirim Ulasan Anda',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          SizedBox(height: 12),
+          Text('Formulir ulasan akan segera hadir!'),
+        ],
+      );
 }
 
 extension StringExtension on String {

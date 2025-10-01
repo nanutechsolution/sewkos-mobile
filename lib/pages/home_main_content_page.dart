@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kossumba_app/models/room_type_price.dart';
+import 'package:kossumba_app/config/config.dart';
+import 'package:kossumba_app/helper/property_filter.dart';
 import 'package:kossumba_app/models/property.dart';
+import 'package:kossumba_app/models/room_type_price.dart';
 import 'package:kossumba_app/pages/search_page.dart';
 import 'package:kossumba_app/providers/property_list_provider.dart';
 import 'package:kossumba_app/screens/property_detail_screen.dart';
@@ -21,28 +23,6 @@ class _HomeMainContentState extends ConsumerState<HomeMainContent> {
   double? _selectedLatitude;
   double? _selectedLongitude;
   double? _selectedRadius;
-
-  final List<Map<String, String>> _promoCards = [
-    {
-      'imageUrl':
-          'https://placehold.co/300x150/4A90E2/FFFFFF?text=Promo+Sewa+Diskon+20%',
-      'title': 'Diskon Sewa 20%!',
-      'subtitle': 'Hanya bulan ini, buruan cek sekarang!',
-    },
-    {
-      'imageUrl':
-          'https://placehold.co/300x150/50E3C2/FFFFFF?text=Kos+Dekat+Kampus',
-      'title': 'Kos Dekat Kampus',
-      'subtitle': 'Sangat cocok buat mahasiswa!',
-    },
-    {
-      'imageUrl':
-          'https://placehold.co/300x150/F5A623/FFFFFF?text=Homestay+Nyaman',
-      'title': 'Homestay Nyaman',
-      'subtitle': 'Fasilitas lengkap dan harga bersahabat',
-    },
-  ];
-
   Future<void> _applyFilters({
     String? searchQuery,
     double? latitude,
@@ -126,141 +106,55 @@ class _HomeMainContentState extends ConsumerState<HomeMainContent> {
       },
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(bottom: 12),
-          child: Text(
-            'Kategori Populer',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-          ),
-        ),
-        SizedBox(
-          height: 100,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: categories.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 16),
-            itemBuilder: (context, index) {
-              final cat = categories[index];
-              return GestureDetector(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(
-                            'Filter kategori "${cat['label']}" akan datang!')),
-                  );
-                },
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade600,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.blue.shade200.withOpacity(0.6),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          )
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: Icon(cat['icon'] as IconData,
-                          color: Colors.white, size: 32),
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      width: 80,
-                      child: Text(
-                        cat['label'] as String,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: Colors.black87,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPromoCards() {
     return SizedBox(
-      height: 160,
+      height: 110,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: _promoCards.length,
+        itemCount: categories.length,
         separatorBuilder: (_, __) => const SizedBox(width: 16),
         itemBuilder: (context, index) {
-          final promo = _promoCards[index];
+          final cat = categories[index];
           return GestureDetector(
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                    content: Text('Promo "${promo['title']}" akan datang!')),
+                  content:
+                      Text('Filter kategori "${cat['label']}" akan datang!'),
+                ),
               );
             },
-            child: Container(
-              width: 300,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                image: DecorationImage(
-                  image: NetworkImage(promo['imageUrl']!),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.35),
-                    BlendMode.darken,
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade600,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.blue.shade200.withOpacity(0.6),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      )
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Icon(cat['icon'] as IconData,
+                      color: Colors.white, size: 32),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: 80,
+                  child: Text(
+                    cat['label'] as String,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 14),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 8,
-                    offset: Offset(0, 4),
-                  )
-                ],
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    promo['title']!,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        shadows: [
-                          Shadow(
-                            offset: Offset(0, 1),
-                            blurRadius: 4,
-                            color: Colors.black54,
-                          )
-                        ]),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    promo['subtitle']!,
-                    style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
+              ],
             ),
           );
         },
@@ -281,12 +175,10 @@ class _HomeMainContentState extends ConsumerState<HomeMainContent> {
 
     return propertyListAsyncValue.when(
       loading: () => SizedBox(
-        height: 260,
+        height: 220,
         child: Center(
           child: CircularProgressIndicator(
-            strokeWidth: 3,
-            color: Colors.blue.shade600,
-          ),
+              strokeWidth: 3, color: Colors.blue.shade600),
         ),
       ),
       error: (error, stack) => Center(
@@ -312,141 +204,137 @@ class _HomeMainContentState extends ConsumerState<HomeMainContent> {
             ),
           );
         }
-        return ListView.separated(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: propertyList.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
-          itemBuilder: (context, index) {
-            final property = propertyList[index];
-            return _buildPropertyCard(property);
-          },
+        return SizedBox(
+          height: 220, // tinggi card
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: propertyList.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final property = propertyList[index];
+              return SizedBox(
+                width: 200, // lebar tiap card
+                child: _buildPropertyCard(property),
+              );
+            },
+          ),
         );
       },
     );
   }
 
   Widget _buildPropertyCard(Property property) {
-    String getFullImageUrl(String url) {
-      if (url.startsWith('http')) return url;
-      return 'http://$url';
-    }
-
     String priceDisplay = 'N/A';
-    if (property.roomTypes.isNotEmpty) {
-      final firstRoomType = property.roomTypes[0];
-      if (firstRoomType.prices.isNotEmpty) {
-        final monthlyPrice = firstRoomType.prices.firstWhere(
-          (p) => p.periodType == 'monthly',
+    if (property.roomTypes.isNotEmpty &&
+        property.roomTypes[0].prices.isNotEmpty) {
+      final monthlyPrice = property.roomTypes[0].prices.firstWhere(
+        (p) => p.periodType == 'monthly',
+        orElse: () =>
+            RoomTypePrice(id: 0, roomTypeId: 0, periodType: '', price: 0),
+      );
+      if (monthlyPrice.price > 0) {
+        priceDisplay = 'Rp ${monthlyPrice.price.toStringAsFixed(0)} / bulan';
+      } else {
+        final dailyPrice = property.roomTypes[0].prices.firstWhere(
+          (p) => p.periodType == 'daily',
           orElse: () =>
-              RoomTypePrice(id: 0, roomTypeId: 0, periodType: '', price: 0.0),
+              RoomTypePrice(id: 0, roomTypeId: 0, periodType: '', price: 0),
         );
-        if (monthlyPrice.price > 0) {
-          priceDisplay = 'Rp ${monthlyPrice.price.toStringAsFixed(0)} / bulan';
-        } else {
-          final dailyPrice = firstRoomType.prices.firstWhere(
-            (p) => p.periodType == 'daily',
-            orElse: () =>
-                RoomTypePrice(id: 0, roomTypeId: 0, periodType: '', price: 0.0),
-          );
-          if (dailyPrice.price > 0) {
-            priceDisplay = 'Rp ${dailyPrice.price.toStringAsFixed(0)} / hari';
-          }
-        }
+        if (dailyPrice.price > 0)
+          priceDisplay = 'Rp ${dailyPrice.price.toStringAsFixed(0)} / hari';
       }
     }
 
+    Color genderColor;
+    switch (property.genderPreference.toLowerCase()) {
+      case 'pria':
+        genderColor = Colors.blue.shade100;
+        break;
+      case 'wanita':
+        genderColor = Colors.pink.shade100;
+        break;
+      case 'campur':
+        genderColor = Colors.green.shade100;
+        break;
+      default:
+        genderColor = Colors.grey.shade300;
+    }
+
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PropertyDetailScreen(propertyId: property.id),
-          ),
-        );
-      },
-      child: Card(
-        elevation: 8,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        clipBehavior: Clip.hardEdge,
-        child: Container(
-          height: 130,
-          child: Row(
-            children: [
-              Hero(
-                tag: 'property-image-${property.id}',
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    bottomLeft: Radius.circular(16),
-                  ),
-                  child: SizedBox(
-                    width: 130,
-                    height: 130,
-                    child: Image.network(
-                      property.images.isNotEmpty
-                          ? getFullImageUrl(property.images[0].imageUrl)
-                          : 'https://placehold.co/130x130/E0E0E0/FFFFFF?text=No+Image',
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Icon(
-                        Icons.broken_image,
-                        size: 64,
-                        color: Colors.grey.shade400,
-                      ),
-                    ),
-                  ),
+              builder: (_) => PropertyDetailScreen(propertyId: property.id))),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8), // hanya vertical
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: const [
+            BoxShadow(
+                color: Colors.black12, blurRadius: 6, offset: Offset(0, 3))
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+              child: SizedBox(
+                height: 120,
+                width: double.infinity,
+                child: Image.network(
+                  getFullImageUrl(property.images.isNotEmpty
+                      ? property.images[0].imageUrl
+                      : '/assets/images/no_image.png'),
+                  fit: BoxFit.cover,
                 ),
               ),
-              Expanded(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(property.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(priceDisplay,
+                      style: const TextStyle(
+                          color: Colors.blue, fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 4),
+                  Row(
                     children: [
-                      Text(
-                        property.name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 18,
-                          color: Colors.black87,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        property.addressCity,
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 14,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        priceDisplay,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Colors.blue,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(6)),
+                        child: Text(
+                          property.genderPreference.isNotEmpty
+                              ? property.genderPreference
+                              : 'Tidak ada preferensi',
+                          style: const TextStyle(fontSize: 11),
                         ),
                       ),
-                      Text(
-                        'Fasilitas: ${property.facilities.map((f) => f.name).join(', ')}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade700,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      const SizedBox(width: 6),
+                      Text("Tersisa: ${property.availableRooms}",
+                          style: TextStyle(
+                              color: property.availableRooms > 0
+                                  ? Colors.green
+                                  : Colors.red,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500)),
                     ],
                   ),
-                ),
-              )
-            ],
-          ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -457,53 +345,65 @@ class _HomeMainContentState extends ConsumerState<HomeMainContent> {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () => _applyFilters(),
-        edgeOffset: 80,
+        edgeOffset: 0,
         child: CustomScrollView(
           slivers: [
-            SliverAppBar(
-              pinned: true,
-              floating: true,
-              snap: true,
-              backgroundColor: Colors.white,
-              elevation: 2,
-              title: _buildSearchBar(),
-              centerTitle: false,
-              automaticallyImplyLeading: false,
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-              sliver: SliverToBoxAdapter(
-                child: _buildCategories(),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              sliver: SliverToBoxAdapter(
-                child: _buildPromoCards(),
-              ),
-            ),
-            const SliverPadding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              sliver: SliverToBoxAdapter(
-                child: Text(
-                  'Kos Rekomendasi',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 24,
-                    color: Colors.black87,
-                  ),
+            // Header / Hero Text
+            SliverToBoxAdapter(
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Halo, Selamat Datang!',
+                      style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Temukan kos, homestay, atau akomodasi nyaman di Sumba.',
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade700,
+                          height: 1.4),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildSearchBar(),
+                  ],
                 ),
               ),
             ),
+
+            // Categories
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              sliver: SliverToBoxAdapter(child: _buildCategories()),
+            ),
+            // Section Title
+            const SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               sliver: SliverToBoxAdapter(
-                child: _buildRecommendedProperties(),
+                child: Text(
+                  'Kos Rekomendasi Untukmu',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 24,
+                      color: Colors.black87),
+                ),
               ),
             ),
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 40),
+            // Recommended Properties
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              sliver: SliverToBoxAdapter(child: _buildRecommendedProperties()),
             ),
+
+            // Footer spacing
+            const SliverToBoxAdapter(child: SizedBox(height: 40)),
           ],
         ),
       ),

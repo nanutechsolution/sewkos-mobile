@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:kossumba_app/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kossumba_app/services/api_service.dart';
@@ -19,7 +18,6 @@ class AuthService {
     await prefs.setString(_tokenKey, token);
     await prefs.setString(
         _userKey, jsonEncode(userData)); // Simpan data user sebagai JSON string
-
     return response;
   }
 
@@ -45,9 +43,7 @@ class AuthService {
     return prefs.getString(_tokenKey);
   }
 
-  // Metode untuk mengambil data user dari local storage
   static Future<UserModel?> getUserFromStorage() async {
-    // PERBAIKAN: Tambahkan metode ini
     final prefs = await SharedPreferences.getInstance();
     final userDataString = prefs.getString(_userKey);
     if (userDataString != null) {

@@ -1,7 +1,7 @@
 import 'package:kossumba_app/models/safe_parser.dart';
 
 class RoomTypePrice {
-  final int id;
+  final int? id;
   final int roomTypeId;
   final String periodType;
   final double price;
@@ -15,8 +15,8 @@ class RoomTypePrice {
 
   factory RoomTypePrice.fromJson(Map<String, dynamic> json) {
     return RoomTypePrice(
-      id: json['id'] as int,
-      roomTypeId: json['room_type_id'] as int,
+      id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      roomTypeId: int.tryParse(json['room_type_id']?.toString() ?? '0') ?? 0,
       periodType: json['period_type'] as String,
       price: parseDoubleSafely(json['price']) ?? 0.0,
     );

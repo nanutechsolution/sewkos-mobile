@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kossumba_app/Screens/owner/owner_registration_screen.dart';
+import 'package:kossumba_app/screens/home_screen.dart';
 import 'package:kossumba_app/screens/profil_screen.dart';
 import 'package:kossumba_app/services/auth.service.dart';
 
@@ -31,10 +32,14 @@ class _OwnerLoginScreenState extends State<OwnerLoginScreen> {
         emailController.text.trim(),
         passwordController.text,
       );
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const UserProfileScreen()),
-        (Route<dynamic> route) => route.isFirst,
-      );
+      // Cek apakah login berhasil
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          (route) => false,
+        );
+      }
     } catch (e) {
       setState(() {
         errorMessage = e.toString();

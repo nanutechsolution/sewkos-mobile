@@ -100,7 +100,7 @@ class Property {
       description: json['description'] as String,
       rules: json['rules'] as String?,
       rulesFileUrl: json['rules_file_url'] as String?,
-      yearBuilt: json['year_built'] as int?,
+      yearBuilt: int.tryParse(json['year_built'].toString()),
       managerName: json['manager_name'] as String?,
       managerPhone: json['manager_phone'] as String?,
       notes: json['notes'] as String?,
@@ -112,10 +112,45 @@ class Property {
       longitude: parseDoubleSafely(json['longitude']),
       totalRooms: calculatedTotalRooms,
       availableRooms: calculatedAvailableRooms,
-      images: parsedImages,
-      roomTypes: parsedRoomTypes,
-      facilities: parsedFacilities,
-      reviews: parsedReviews,
+      images: parseListMapSafely(json['images'])
+          .map((i) => PropertyImage.fromJson(i))
+          .toList(),
+      roomTypes: parseListMapSafely(json['room_types'])
+          .map((rt) => RoomType.fromJson(rt))
+          .toList(),
+      facilities: parseListMapSafely(json['facilities'])
+          .map((f) => Facility.fromJson(f))
+          .toList(),
+      reviews: parseListMapSafely(json['reviews'])
+          .map((r) => Review.fromJson(r))
+          .toList(),
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user_id': userId,
+      'name': name,
+      'gender_preference': genderPreference,
+      'description': description,
+      'rules': rules,
+      'rules_file_url': rulesFileUrl,
+      'year_built': yearBuilt,
+      'manager_name': managerName,
+      'manager_phone': managerPhone,
+      'notes': notes,
+      'address_street': addressStreet,
+      'address_city': addressCity,
+      'address_province': addressProvince,
+      'address_zip_code': addressZipCode,
+      'latitude': latitude,
+      'longitude': longitude,
+      'total_rooms': totalRooms,
+      'available_rooms': availableRooms,
+      'images': images.map((img) => img.toJson()).toList(),
+      'room_types': roomTypes.map((rt) => rt.toJson()).toList(),
+      'facilities': facilities.map((f) => f.toJson()).toList(),
+      'reviews': reviews.map((r) => r.toJson()).toList(),
+    };
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kossumba_app/screens/owner/owner_login_screen.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -34,9 +35,7 @@ class AuthScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             ElevatedButton.icon(
-              onPressed: () {
-                // TODO: Navigasi ke login pencari kos
-              },
+              onPressed: () {},
               icon: const Icon(Icons.person_search),
               label: const Text('Pencari Kos'),
               style: ElevatedButton.styleFrom(
@@ -47,7 +46,10 @@ class AuthScreen extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: () {
-                // TODO: Navigasi ke login pemilik kos
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => const OwnerLoginScreen()),
+                );
               },
               icon: const Icon(Icons.business),
               label: const Text('Pemilik Kos'),

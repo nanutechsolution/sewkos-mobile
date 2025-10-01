@@ -25,4 +25,15 @@ class Review {
       rating: json['rating'] as int,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'property_id': propertyId,
+      'user_id': userId,
+      'author_name': authorName,
+      'comment': comment,
+      'rating': rating,
+    };
+  }
 }
